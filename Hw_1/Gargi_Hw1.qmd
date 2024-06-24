@@ -1,5 +1,5 @@
 ---
-title: "Data Analysis"
+title: "Data Analysis of USArrests Dataset"
 author: "Gargi Rajadnya - 23200711"
 format: pdf
 editor: visual
