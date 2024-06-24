@@ -26,6 +26,8 @@ Let's take a look at the data we have
 suppressMessages({
   library(reshape2)
   library(dplyr)
+  library(factoextra)
+  library(ggplot2)
 })
 ```
 
@@ -96,3 +98,54 @@ ggplot(data = melted_corr_matrix, aes(x=Var1,
 The above heatmap shows the correlation between the variables: Murder, Assault, Rape, UrbanPop
 
 It can be interpreted that Assault and Murder have the highest correlation among the variables. This means that places with higher murder rates also tend to have higher assault rates.
+
+## Clustering
+
+### Kmeans clustering
+
+Applying K-means clustering to uncover patterns in crime statistics and group US states into clusters.
+
+```{r}
+#standardizing the data
+scaled_df <- scale(USArrests)
+head(scaled_df)
+```
+
+```{r}
+#determining optimal number of clusters by elbow method
+opt_clust <- fviz_nbclust(scaled_df, kmeans, method = "wss")
+opt_clust
+```
+
+After observation, it can be said, 4 clusters are possibly optimal!
+
+```{r}
+#Kmeans
+set.seed(23200711)
+kmeans_clust <- kmeans(scaled_df, centers = 4, nstart = 25)
+```
+
+```{r}
+#means of each cluster
+aggregate(USArrests, by = list(cluster = kmeans_clust$cluster), mean)
+```
+
+```{r}
+#clusters plot
+fviz_cluster(kmeans_clust, data = scaled_df, ellipse.type = "convex", ggtheme = theme_minimal())
+```
+
+### Hierarchical clustering
+
+```{r}
+#calculating euclidean dist
+df_dist <- dist(scaled_df)
+
+#hierarchical clustering 
+hierar_clust <- hclust(df_dist)
+
+#dendrogram
+plot(hierar_clust)
+```
+
+Again, we can say- 3 or 4 clusters are optimal!
