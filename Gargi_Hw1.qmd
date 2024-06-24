@@ -1,0 +1,98 @@
+---
+title: "Data Analysis"
+author: "Gargi Rajadnya - 23200711"
+format: pdf
+editor: visual
+execute:
+  echo: false
+---
+
+## **USArrests Dataset**
+
+For the purpose of this assignment, the dataset selected is USArrests.
+
+## Introduction
+
+The USArrests dataset is a collection of information on arrest rates in the US for various crimes. It contains data for each of the 50 states, including the number of arrests per 100,000 residents for murder, assault, rape, and the percentage of the population living in urban areas.
+
+## Description
+
+Let's delve into the data using descriptive statistics, which provides a summary including maximum, minimum, median, and other key metrics, along with correlation analysis. Exploring the correlation among variables is essential during data analysis, particularly when progressing to model development. Understanding the relationships between variables is crucial as it allows us to streamline models, identify the most relevant features, and validate associations. Additionally, correlation analysis guides data exploration, ensures quality monitoring, and assists in financial decision-making by identifying assets with low correlation for effective risk management. In essence, correlation analysis serves as a potent tool for gaining valuable insights and enhancing decision-making processes.
+
+Let's take a look at the data we have
+
+```{r}
+#load libraries
+suppressMessages({
+  library(reshape2)
+  library(dplyr)
+})
+```
+
+```{r}
+#loading USArrests dataset
+USArrests <- as.data.frame(USArrests)
+head(USArrests)
+```
+
+**Summary of the data**
+
+```{r}
+#summary
+summary(USArrests)
+```
+
+***Murder*****:**
+
+Rate of murders per 100,000 residents. It ranges from a minimum of 0.8 to a maximum of 17.4. The median is 7.25, indicating that half the states have murder rates below 7.25 and the other half above.
+
+***Assault*****:**
+
+Rate of assaults per 100,000 residents. It ranges from a minimum of 45 to a maximum of 337. The median is 159, indicating that half the states have assault rates below 159 and the other half above.
+
+***Rape*****:**
+
+Rate of rapes per 100,000 residents. It ranges from a minimum of 7.3 to a maximum of 46. The median is 20.1, indicating that half the states have rape rates below 20.1 and the other half above.
+
+***UrbanPop*****:**
+
+Percentage of urban population in each state. Ranges from a minimum of 32% to a maximum of 91%. The median is 66%, indicating that half the states have a lower urban population and the other half a higher urban population.
+
+## Correlation Matrix
+
+```{r}
+#correlation matrix
+corr_matrix <- round(cor(USArrests),2)
+head(corr_matrix)
+```
+
+## Reshaping
+
+To create a visually appealing heatmap, we need to reshape our correlation matrix into a long format. We’ll use the reshape2 library for this purpose and dplyr library to rename our columns.
+
+```{r}
+#melting with the library "reshape"
+melted_corr_matrix <- melt(corr_matrix)
+melted_corr_matrix <- melted_corr_matrix %>% rename(Var1 = Var1, Var2 = Var2, corr = value)
+head(melted_corr_matrix)
+```
+
+## **Plotting: Correlation Heatmap**
+
+Below is a correlation heatmap plotted with the help of ggplot library. It is a graphical representation of the correlation matrix, which shows how variables in the dataset are related to each other. The below also demonstrates correlation coefficients, which are a measure that represents how strong the relationship is between two variables. The higher the absolute value of the coefficient, the higher is the correlation.
+
+```{r}
+#plotting the correlation on a heatmap
+library(ggplot2)
+ggplot(data = melted_corr_matrix, aes(x=Var1, 
+                                      y=Var2, 
+                                      fill=corr)) + 
+  geom_tile() + geom_text(aes(Var2, 
+                              Var1, 
+                              label = corr), 
+                          color = "aliceblue", size = 4)
+```
+
+The above heatmap shows the correlation between the variables: Murder, Assault, Rape, UrbanPop
+
+It can be interpreted that Assault and Murder have the highest correlation among the variables. This means that places with higher murder rates also tend to have higher assault rates.
